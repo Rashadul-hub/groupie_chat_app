@@ -1,6 +1,8 @@
 import 'dart:math';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:groupie/pages/auth/register_page.dart';
 import 'package:groupie/widgets/widgets.dart';
 
 class LoginPage extends StatefulWidget {
@@ -104,8 +106,27 @@ class _LoginPageState extends State<LoginPage> {
                       "Sign In",
                       style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      login();
+                    },
                   ),
+                ),
+                const SizedBox(height: 10,),
+                Text.rich(
+                  TextSpan(
+                    text: "Don't have an account? ",
+                    style: const TextStyle(color: Colors.black,fontSize: 14),
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: "Register here",
+                        style: const TextStyle(color: Colors.black, decoration: TextDecoration.underline),
+                        recognizer: TapGestureRecognizer()..onTap = (){
+                          nextScreen(context, const RegisterPage());
+
+                        }
+                      )
+                    ],
+                  )
                 )
               ],
             ),
@@ -114,4 +135,9 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+}
+
+
+login(){
+
 }
