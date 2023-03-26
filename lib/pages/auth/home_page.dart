@@ -1,4 +1,5 @@
- import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:groupie/service/auth_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -8,10 +9,18 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  AuthService authService = AuthService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(child: Text("HomePage"),),
+      body: Center(
+          child: ElevatedButton(
+        child: Text("LOGOUT"),
+        onPressed: () {
+          authService.signout();
+
+        },
+      )),
     );
   }
 }
