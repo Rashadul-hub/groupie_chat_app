@@ -1,65 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:groupie/helper/helper_function.dart';
-import 'package:groupie/pages/auth/login_page.dart';
-import 'package:groupie/pages/auth/profile_page.dart';
-import 'package:groupie/pages/auth/search_page.dart';
+import 'package:groupie/pages/auth/home_page.dart';
 import 'package:groupie/service/auth_service.dart';
-import 'package:groupie/widgets/widgets.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+import '../../widgets/widgets.dart';
+import 'login_page.dart';
+
+class ProfilePage extends StatefulWidget {
+
+  String userName;
+  String email;
+
+   ProfilePage({Key? key, required this.userName, required this.email}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  String userName = "";
-  String email = "";
-  AuthService authService = AuthService();
-
-  @override
-  void initState() {
-    super.initState();
-    gettingUserData();
-  }
-
-  //getting user data in the Side menu bar of Home Sceen
-  gettingUserData() async {
-    await HelperFunctions.getUserEmailFromSF().then((value) {
-      setState(() {
-        email = value!;
-      });
-    });
-    await HelperFunctions.getUserNameFromSF().then((val) {
-      setState(() {
-        userName = val!;
-      });
-    });
-  }
+class _ProfilePageState extends State<ProfilePage> {
+  AuthService authService =  AuthService();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-              onPressed: () {
-                nextScreen(context, SearchPage());
-              },
-              icon: const Icon(Icons.search))
-        ],
-        elevation: 0,
-        centerTitle: true,
-        backgroundColor: Theme.of(context).primaryColor,
-        title: const Text(
-          "Groups",
-          style: TextStyle(
-              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 27),
-        ),
-      ),
-      drawer: Drawer(
-          child: ListView(
+         appBar: AppBar(
+           backgroundColor: Theme.of(context).primaryColor ,
+           elevation: 0,
+           centerTitle: true,
+           title: const Text(
+             "Profile",
+             style: TextStyle(
+               color: Colors.white,
+               fontSize: 27,
+               fontWeight: FontWeight.bold,
+             ),
+           ),
+         ),
+      drawer: Drawer(child: ListView(
         padding: const EdgeInsets.symmetric(vertical: 50),
         children: <Widget>[
           Icon(
@@ -71,7 +47,7 @@ class _HomePageState extends State<HomePage> {
             height: 15,
           ),
           Text(
-            userName,
+            widget.userName,
             textAlign: TextAlign.center,
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
@@ -82,9 +58,10 @@ class _HomePageState extends State<HomePage> {
             height: 2,
           ),
           ListTile(
-            onTap: () {},
-            selectedColor: Theme.of(context).primaryColor,
-            selected: true,
+            onTap: () {
+              nextScreen(context, const HomePage());
+            },
+
             contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
             leading: const Icon(Icons.group),
             title: const Text(
@@ -93,9 +70,9 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           ListTile(
-            onTap: () {
-              nextScreenReplace(context,  ProfilePage(userName: userName, email: email,));
-            },
+            onTap: () {},
+            selected: true,
+            selectedColor: Theme.of(context).primaryColor,
             contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
             leading: const Icon(Icons.group),
             title: const Text(
@@ -128,7 +105,7 @@ class _HomePageState extends State<HomePage> {
                             Navigator.of(context).pushAndRemoveUntil(
                                 MaterialPageRoute(
                                     builder: (context) => const LoginPage()),
-                                (route) => false);
+                                    (route) => false);
                           },
                           icon: const Icon(
                             Icons.done,
@@ -153,7 +130,10 @@ class _HomePageState extends State<HomePage> {
             ),
           )
         ],
-      )),
+      )
+      ),
+
+      
     );
   }
 }
