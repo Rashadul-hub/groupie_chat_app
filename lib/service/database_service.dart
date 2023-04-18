@@ -28,4 +28,10 @@ class DatasbaseService {
 
     return snapshot;
   }
+
+  //get user groups
+  getUserGroups() async {
+    return userCollection.doc(uid).snapshots();
+  }
+
 }
