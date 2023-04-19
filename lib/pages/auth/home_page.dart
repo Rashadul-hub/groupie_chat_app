@@ -6,6 +6,7 @@ import 'package:groupie/pages/auth/profile_page.dart';
 import 'package:groupie/pages/auth/search_page.dart';
 import 'package:groupie/service/auth_service.dart';
 import 'package:groupie/service/database_service.dart';
+import 'package:groupie/widgets/group_tile.dart';
 import 'package:groupie/widgets/widgets.dart';
 
 class HomePage extends StatefulWidget {
@@ -20,11 +21,22 @@ class _HomePageState extends State<HomePage> {
   String email = "";
   AuthService authService = AuthService();
   Stream? groups;
+  bool _isLoading = false;
+  String groupName = "";
 
   @override
   void initState() {
     super.initState();
     gettingUserData();
+  }
+
+  // String manipulation
+  String getId(String res) {
+    return res.substring(0, res.indexOf("_"));
+  }
+
+  String getName(String res) {
+    return res.substring(res.indexOf("_") + 1);
   }
 
   //getting user data in the Side menu bar of Home Sceen
@@ -156,12 +168,6 @@ class _HomePageState extends State<HomePage> {
                     );
                   });
             },
-
-            //   authService.signout().whenComplete(() {
-            //     nextScreenReplace(context, const LoginPage());
-            //   });
-            // },
-
             contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
             leading: const Icon(Icons.exit_to_app),
             title: const Text(
@@ -188,9 +194,86 @@ class _HomePageState extends State<HomePage> {
   }
 
   //PopUp Page Screen Creating Group
-  popUpDialog(BuildContext context) {
-  }
 
+  popUpDialog(BuildContext context) {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(builder: ((context, setState) {
+            return AlertDialog(
+              title: const Text(
+                "Create a group",
+                textAlign: TextAlign.left,
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _isLoading == true
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        )
+                      : TextField(
+                          onChanged: (val) {
+                            setState(() {
+                              groupName = val;
+                            });
+                          },
+                          style: const TextStyle(color: Colors.black),
+                          decoration: InputDecoration(
+                            enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Theme.of(context).primaryColor),
+                                borderRadius: BorderRadius.circular(15)),
+                            errorBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(color: Colors.red),
+                                borderRadius: BorderRadius.circular(15)),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Theme.of(context).primaryColor),
+                                borderRadius: BorderRadius.circular(15)),
+                          ),
+                        ),
+                ],
+              ),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  style: ElevatedButton.styleFrom(
+                      primary: Theme.of(context).primaryColor),
+                  child: const Text("CANCEL"),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (groupName != "") {
+                      setState(() {
+                        _isLoading = true;
+                      });
+                      DatasbaseService(
+                              uid: FirebaseAuth.instance.currentUser!.uid)
+                          .createGroup(userName,
+                              FirebaseAuth.instance.currentUser!.uid, groupName)
+                          .whenComplete(() {
+                        _isLoading = false;
+                      });
+                      Navigator.of(context).pop();
+                      showSnackBar(
+                          context, Colors.green, "Group created successfully.");
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                      primary: Theme.of(context).primaryColor),
+                  child: const Text("CREATE"),
+                ),
+              ],
+            );
+          }));
+        });
+  }
 
   groupList() {
     return StreamBuilder(
@@ -200,7 +283,16 @@ class _HomePageState extends State<HomePage> {
           if (snapshot.hasData) {
             if (snapshot.data['groups'] != null) {
               if (snapshot.data['groups'].length != 0) {
-                return Text("Helllo");
+                return ListView.builder(
+                  itemCount: snapshot.data['groups'].length,
+                  itemBuilder: (context, index) {
+                    int reverseIndex  = snapshot.data['groups'].length - index -1;
+                    return GroupTile(
+                        groupName: getName(snapshot.data['groups'][reverseIndex]),
+                        groupId: getId(snapshot.data['groups'][reverseIndex]),
+                        userName: snapshot.data['fullName']);
+                  },
+                );
               } else {
                 return noGroupWidget();
               }
@@ -225,7 +317,7 @@ class _HomePageState extends State<HomePage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           GestureDetector(
-            onTap: (){
+            onTap: () {
               popUpDialog(context);
             },
             child: Icon(
@@ -238,8 +330,9 @@ class _HomePageState extends State<HomePage> {
             height: 20,
           ),
           const Text(
-              "You've not joined any groups, tap on the add icon to create group or search from the search icon",
-          textAlign: TextAlign.center ,),
+            "You've not joined any groups, Please tap on the add icon to create group or search from the search icon",
+            textAlign: TextAlign.center,
+          ),
         ],
       ),
     );
