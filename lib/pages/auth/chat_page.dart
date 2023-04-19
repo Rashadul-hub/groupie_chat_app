@@ -60,7 +60,7 @@ class _ChatPageState extends State<ChatPage> {
                 nextScreen(context, GroupInfo(
                   groupId: widget.groupId,
                   groupName:  widget.groupName,
-                  adminName: ,
+                  adminName: admin,
                 ));
               },
               icon: const Icon(Icons.info))
