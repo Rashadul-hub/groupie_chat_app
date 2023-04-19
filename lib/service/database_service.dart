@@ -36,15 +36,14 @@ class DatasbaseService {
 
   //creating a group
   Future createGroup(String userName, String id, String groupName) async {
-
     //Group Admin Information
     DocumentReference groupDocumentReference = await groupCollection.add({
       "groupName": groupName,
       "groupIcon": "",
       "admin": "${id}_$userName",
-      "members":[],
+      "members": [],
       "groupId": "",
-      "recentMessage":"",
+      "recentMessage": "",
       "recentMessageSender": "",
     });
 
@@ -54,11 +53,24 @@ class DatasbaseService {
       "groupId": groupDocumentReference.id,
     });
 
-    DocumentReference userDocumentReference =  userCollection.doc(uid);
+    DocumentReference userDocumentReference = userCollection.doc(uid);
     return await userDocumentReference.update({
-      "groups": FieldValue.arrayUnion(
-          ["${groupDocumentReference.id}_$groupName"])
+      "groups":
+          FieldValue.arrayUnion(["${groupDocumentReference.id}_$groupName"])
     });
+  }
 
+  //getting the chats
+  getChats(String groupId) async {
+    return groupCollection
+        .doc(groupId)
+        .collection("messages")
+        .orderBy("time")
+        .snapshots();
+  }
+  Future getGroupAdmin(String groupId) async {
+    DocumentReference d = groupCollection.doc(groupId);
+    DocumentSnapshot documentSnapshot = await d.get();
+    return documentSnapshot['admin'];
   }
 }
