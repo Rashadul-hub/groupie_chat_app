@@ -2,13 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatasbaseService {
   final String? uid;
+
   DatasbaseService({this.uid});
 
   // reference for our collections
   final CollectionReference userCollection =
-      FirebaseFirestore.instance.collection("users");
+  FirebaseFirestore.instance.collection("users");
   final CollectionReference groupCollection =
-      FirebaseFirestore.instance.collection("groups");
+  FirebaseFirestore.instance.collection("groups");
 
   // saving the userdata
   Future savingUserData(String fullName, String email) async {
@@ -24,7 +25,7 @@ class DatasbaseService {
   //getting user data
   Future gettingUserData(String email) async {
     QuerySnapshot snapshot =
-        await userCollection.where("email", isEqualTo: email).get();
+    await userCollection.where("email", isEqualTo: email).get();
 
     return snapshot;
   }
@@ -56,7 +57,7 @@ class DatasbaseService {
     DocumentReference userDocumentReference = userCollection.doc(uid);
     return await userDocumentReference.update({
       "groups":
-          FieldValue.arrayUnion(["${groupDocumentReference.id}_$groupName"])
+      FieldValue.arrayUnion(["${groupDocumentReference.id}_$groupName"])
     });
   }
 
@@ -68,16 +69,25 @@ class DatasbaseService {
         .orderBy("time")
         .snapshots();
   }
+
   Future getGroupAdmin(String groupId) async {
     DocumentReference d = groupCollection.doc(groupId);
     DocumentSnapshot documentSnapshot = await d.get();
     return documentSnapshot['admin'];
   }
+
   //get group members
-  getGroupMembers(groupId) async{
+  getGroupMembers(groupId) async {
     return groupCollection.doc(groupId).snapshots();
   }
 
+  //search
+  searchByName(String groupName) {
+    return groupCollection.where("groupName", isEqualTo: groupName).get();
+  }
+
+  // return a bool value
+  // function -> bool
 
 
 
