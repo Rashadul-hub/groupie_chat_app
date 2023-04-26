@@ -188,7 +188,8 @@ class _SearchPageState extends State<SearchPage> {
                   ChatPage(
                       groupId: groupId,
                       groupName: groupName,
-                      userName: userName));
+                      userName: userName
+                  ));
             });
           }
           else {

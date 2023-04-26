@@ -46,9 +46,7 @@ Future signout() async{
       await HelperFunctions.saveUserNameSF("");
       await firebaseAuth.signOut();
 
-
     }catch(e){
-
     }
 }
 }

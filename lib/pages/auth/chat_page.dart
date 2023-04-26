@@ -10,12 +10,12 @@ class ChatPage extends StatefulWidget {
   final String groupName;
   final String userName;
 
-  const ChatPage(
-      {Key? key,
-      required this.groupId,
-      required this.groupName,
-      required this.userName})
-      : super(key: key);
+  const ChatPage({
+    Key? key,
+    required this.groupId,
+    required this.groupName,
+    required this.userName,
+  }) : super(key: key);
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -23,6 +23,8 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   Stream<QuerySnapshot>? chats;
+
+  // for handling message text changes
   TextEditingController messageController = TextEditingController();
   String admin = "";
 
@@ -113,7 +115,7 @@ class _ChatPageState extends State<ChatPage> {
                 )
               ]),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -121,25 +123,26 @@ class _ChatPageState extends State<ChatPage> {
 
   chatMessages() {
     return StreamBuilder(
-        stream: chats,
-        builder: (context, AsyncSnapshot snapshot) {
-          return snapshot.hasData
-              ? ListView.builder(
-                  itemCount: snapshot.data.docs.length,
-                  itemBuilder: (context, index) {
-                    return MessageTile(
-                        message: snapshot.data.docs[index]['message'],
-                        sender: snapshot.data.docs[index]['sender'],
-                        sentByMe: widget.userName ==
-                            snapshot.data.docs[index]['sender']);
-                  },
-                )
-              : Container();
-        });
+      stream: chats,
+      builder: (context, AsyncSnapshot snapshot) {
+        return snapshot.hasData
+            ? ListView.builder(
+                itemCount: snapshot.data.docs.length,
+                itemBuilder: (context, index) {
+                  return MessageTile(
+                      message: snapshot.data.docs[index]['message'],
+                      sender: snapshot.data.docs[index]['sender'],
+                      sentByMe: widget.userName ==
+                          snapshot.data.docs[index]['sender']);
+                },
+              )
+            : Container();
+      },
+    );
   }
 
   sendMessage() {
-    if(messageController.text.isNotEmpty){
+    if (messageController.text.isNotEmpty) {
       Map<String, dynamic> chatMessageMap = {
         "message": messageController.text,
         "sender": widget.userName,

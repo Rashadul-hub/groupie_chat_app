@@ -50,7 +50,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                       ),
                       const SizedBox(
-                        height: 10,
+                        height: 15,
                       ),
                       const Text(
                         "Create your account now to chat & explore",
@@ -59,9 +59,11 @@ class _RegisterPageState extends State<RegisterPage> {
                           fontWeight: FontWeight.w400,
                         ),
                       ),
-                      Image.asset("assets/register.png"),
+                      Image.asset("assets/register.png",),
+
                       TextFormField(
                         decoration: textInputDecoration.copyWith(
+
                             labelText: "Full Name",
                             prefixIcon: Icon(
                               Icons.person,
