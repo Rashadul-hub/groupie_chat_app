@@ -16,10 +16,7 @@ Happy Chatting 👍
 Show some :heart: and star the repo to support the project
 
 <h3>Stay Healthy!✨Stay Safe!🖖</h3>
- 
 
-## Note
- I do not own any of the images used in this project.
 
 For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
